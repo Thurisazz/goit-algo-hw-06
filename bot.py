@@ -39,26 +39,29 @@ class Record:
             if p.value == phone:
                 self.phones.remove(p)
 
-    def edit_phone(self, old_phone, new_phone):
-        for p in self.phones:
-            if p.value == old_phone:
-                p.value = new_phone
+    def edit_phone(self, old_number_phone, new_number_phone):
+        try:
+            Phone(new_number_phone)
+        except ValueError as e:
+            raise ValueError(f'New number is incorrect: {e}')
+
+        for phone in self.phones:
+            if phone.value == old_number_phone:
+                phone.value = new_number_phone
+                return 'Number is successfully updated'
+        raise ValueError("Old number is not defined")
+
 
     def find_phone(self, phone):
-        for p in self.phones:
-            if p.value == phone:
-                return p
+        for phone in self.phones:
+            if phone.value == phone:
+                return phone
 
     def __str__(self):
         phones_info = "; ".join(str(phone) for phone in self.phones)
-        return f"{self.name}, phones: {phones_info}"
+        return f"Contact name: {self.name.value}, phones: {phones_info}"
 
-    def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
-
-class AddressBook:
-    def __init__(self):
-        self.data = {}
+class AddressBook(UserDict):
 
     def add_record(self, record):
         self.data[record.name.value] = record
@@ -97,6 +100,9 @@ for name, record in book.data.items():
 john = book.find("John")
 john.edit_phone("1234567890", "1112223333")
 
+john.edit_phone("1234567890", "1112223")
+
+
 print(john)  # Виведення: Contact name: John, phones: 1112223333; 5555555555
 
     # Пошук конкретного телефону у записі John
@@ -105,3 +111,4 @@ print(f"{john.name}: {found_phone}")  # Виведення: John: 5555555555
 
     # Видалення запису Jane
 book.delete("Jane")
+
